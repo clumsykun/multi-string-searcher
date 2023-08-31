@@ -1,47 +1,38 @@
-#include "catdict.h"
+#include "dtypes.h"
 #include "cd_long.h"
 
 
 PyObject *
-db_i_set(database *db, PyObject *args)
+cd_i_set(catdict *cd, PyObject *key, PyObject *item)
 {
-    PyObject *key;
-    long item;
+    PyObject *o;
 
-    if (!PyArg_ParseTuple(args, "Ol", &key, &item))
+    if (PyBool_Check(item) || PyLong_CheckExact(item) || PyFloat_CheckExact(item)) {
+        o = PyNumber_Long(item);
+
+        if (o == NULL)
+            Py_RETURN_ERR;
+    }
+    else {
+        PyErr_SetString(PyExc_TypeError, "Except 'bool', 'int', or 'float' value.");
         return NULL;
+    };
 
-    if (db->dict_long == NULL) {
-        db->dict_long = PyDict_New();
+    if (cd->dict_long == NULL) {
+        cd->dict_long = PyDict_New();
 
         // Error handling.
-        if (db->dict_long == NULL)
+        if (cd->dict_long == NULL)
             Py_RETURN_ERR;
     }
 
-    PyObject *o = PyLong_FromLong(item);
-    if (o == NULL) 
+    if (PyDict_SetItem(cd->dict_long, key, o) < 0) {
+
+        if (PyObject_Hash(key) == -1)
+            Py_RETURN_HASH_ERR;
+
         Py_RETURN_ERR;
+    }
 
-    if (PyDict_SetItem(db->dict_long, key, o) < 0)
-        return NULL;
-    else 
-        Py_RETURN_NONE;
-}
-
-PyObject *
-db_i_get(database *db, PyObject *args)
-{
-    PyObject *key;
-
-    if (!PyArg_ParseTuple(args, "O", &key))
-        return NULL;
-
-    PyObject *o = PyDict_GetItemWithError(db->dict_long, key);
-    Py_INCREF(o);
-
-    if (o == NULL)
-        PyErr_SetObject(PyExc_KeyError, key);
-
-    return o;
+    Py_RETURN_NONE;
 }

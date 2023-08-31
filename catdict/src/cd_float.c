@@ -1,53 +1,37 @@
-#include "catdict.h"
+#include "dtypes.h"
 #include "cd_float.h"
 
 
 PyObject *
-db_f_set(database *db, PyObject *args)
+cd_f_set(catdict *cd, PyObject *key, PyObject *item)
 {
-    PyObject *key;
-    double item;
+    PyObject *o;
+    if (PyBool_Check(item) || PyLong_CheckExact(item) || PyFloat_CheckExact(item)) {
+        o = PyNumber_Float(item);
 
-    if (!PyArg_ParseTuple(args, "Od", &key, &item))
+        if (o == NULL)
+            Py_RETURN_ERR;
+    }
+    else {
+        PyErr_SetString(PyExc_TypeError, "Except 'bool', 'int', or 'float' value.");
         return NULL;
+    };
 
-    if (db->dict_float == NULL) {
-        db->dict_float = PyDict_New();
+    if (cd->dict_float == NULL) {
+        cd->dict_float = PyDict_New();
 
         // Error handling.
-        if (db->dict_float == NULL) {
-            SET_DEFAULT_ERR;
-            return NULL;
-        }
+        if (cd->dict_float == NULL)
+            Py_RETURN_ERR;
     }
 
-    PyObject *o = PyFloat_FromDouble(item);
-    if (o == NULL) {
-        SET_DEFAULT_ERR;
-        return NULL;
+    if (PyDict_SetItem(cd->dict_float, key, o) < 0) {
+
+        if (PyObject_Hash(key) == -1)
+            Py_RETURN_HASH_ERR;
+
+        Py_RETURN_ERR;
     }
 
-    if (PyDict_SetItem(db->dict_float, key, o) < 0)
-        return NULL;
-    else 
-        Py_RETURN_NONE;
-}
-
-PyObject *
-db_f_get(database *db, PyObject *args)
-{
-    PyObject *key;
-
-    if (!PyArg_ParseTuple(args, "O", &key))
-        return NULL;
-
-    PyObject *o = PyDict_GetItemWithError(db->dict_float, key);
-    Py_INCREF(o);
-
-    if (o == NULL) {
-        PyErr_SetObject(PyExc_KeyError, key);
-        return NULL;
-    }
-
-    return o;
+    Py_RETURN_NONE;
 }

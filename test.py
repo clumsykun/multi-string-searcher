@@ -1,158 +1,236 @@
 from pprint import pprint
-import catdict
+import _catdict
+import json
 
-d = catdict.CatDict()
-
+d = _catdict._CatDict()
 
 def func_version():
-    catdict.version()
+    _catdict.version()
 
 
-def catdict_iSet():
-    print('Test of CatDict.iSet()')
-    d.iSet('a', 1)
+def _catdict_str_set():
+    print('Test of CatDict.str.assign()')
+    d.str.assign('key', 'string 1.')
 
     try:
-        d.iSet('key', 'string')
+        d.str.assign('a', 1)
     except TypeError as e:
         print('-->', e)
 
-    d.iSet(1, 1)
+    d.str.assign(2, 'string 2')
     print('--> OK')
 
 
-def catdict_iGet():
-    print('Test of CatDict.iGet()')
+def _catdict_str_get():
+    print('Test of CatDict.str.access()')
 
-    d.iSet('k', 1)
-    assert isinstance(d.iGet('k'), int)
-    assert d.iGet('k') == 1
+    d.str.assign('k', 'This is some long string!')
+    assert isinstance(d.str.access('k'), str)
+    assert d.str.access('k') == 'This is some long string!'
 
+    d.str.access('k')
+    d.str.access('k')
+    d.str.access('k')
     print('--> OK')
 
 
-def catdict_fSet():
-    print('Test of CatDict.fSet()')
-    d.fSet('a', 1)
+def _catdict_bool_set():
+    print('Test of CatDict.bool.assign()')
+    d.bool.assign('key', True)
 
     try:
-        d.fSet('key', 'string')
+        d.bool.assign('a', 'something')
     except TypeError as e:
         print('-->', e)
 
-    d.fSet(1, 3.14)
+    d.bool.assign(2, 2)
     print('--> OK')
 
 
-def catdict_fGet():
-    print('Test of CatDict.fGet()')
+def _catdict_bool_get():
+    print('Test of CatDict.bool.access()')
 
-    d.fSet('k', 1)
-    assert isinstance(d.fGet('k'), float)
-    assert d.fGet('k') == 1
+    d.bool.assign('k', 1)
+    assert isinstance(d.bool.access('k'), bool)
+    assert d.bool.access('k') == 1
 
     print('--> OK')
 
 
-def catdict_uSet():
-    print('Test of CatDict.uSet()')
-    d.uSet('key', 'string 1.')
+def _catdict_int_set():
+    print('Test of CatDict.int.assign()')
+    d.int.assign('a', 1)
 
     try:
-        d.uSet('a', 1)
+        d.int.assign('key', 'string')
     except TypeError as e:
         print('-->', e)
 
-    d.uSet(2, 'string 2')
+    d.int.assign(1, 1)
     print('--> OK')
 
 
-def catdict_uGet():
-    print('Test of CatDict.uGet()')
+def _catdict_int_get():
+    print('Test of CatDict.int.access()')
 
-    d.uSet('k', 'This is some long string!')
-    assert isinstance(d.uGet('k'), str)
-    assert d.uGet('k') == 'This is some long string!'
+    d.int.assign('k', 1)
+    assert isinstance(d.int.access('k'), int)
+    assert d.int.access('k') == 1
 
-    d.uGet('k')
-    d.uGet('k')
-    d.uGet('k')
     print('--> OK')
 
 
-def catdict_lSet():
-    print('Test of CatDict.lSet()')
-    d.lSet('key', [])
+def _catdict_float_set():
+    print('Test of CatDict.float.assign()')
+    d.float.assign('a', 1)
 
     try:
-        d.lSet('a', 1)
+        d.float.assign('key', 'string')
     except TypeError as e:
         print('-->', e)
 
+    d.float.assign(1, 3.14)
     print('--> OK')
 
 
-def catdict_lGet():
-    print('Test of CatDict.lGet()')
+def _catdict_float_get():
+    print('Test of CatDict.float.access()')
 
-    d.lSet('k', [])
-    assert isinstance(d.lGet('k'), list)
-
-    d.lGet('k').append(1)
-    assert d.lGet('k')[0] == 1
+    d.float.assign('k', 1)
+    assert isinstance(d.float.access('k'), float)
+    assert d.float.access('k') == 1
 
     print('--> OK')
 
 
-def catdict_sSet():
-    print('Test of CatDict.sSet()')
-    d.sSet('key', set())
+def _catdict_list_set():
+    print('Test of CatDict.list.assign()')
+    d.list.assign('key', [])
 
     try:
-        d.sSet('a', [])
+        d.list.assign('a', 1)
     except TypeError as e:
         print('-->', e)
 
     print('--> OK')
 
 
-def catdict_sGet():
-    print('Test of CatDict.sGet()')
+def _catdict_list_get():
+    print('Test of CatDict.list.access()')
 
-    d.sSet('k', set())
-    assert isinstance(d.sGet('k'), set)
+    d.list.assign('k', [])
+    assert isinstance(d.list.access('k'), list)
 
-    d.sGet('k').add(1)
-    assert d.sGet('k') == set([1])
+    d.list.access('k').append(1)
+    assert d.list.access('k')[0] == 1
 
     print('--> OK')
 
 
-def catdict_as_dict():
-    print('Test of CatDict.as_dict()')
-    dict_of_database = d.as_dict()
+def _catdict_tuple_set():
+    print('Test of CatDict.tuple.assign()')
+    d.tuple.assign('key', (1,))
+
+    try:
+        d.tuple.assign('a', 1)
+    except TypeError as e:
+        print('-->', e)
+
+    print('--> OK')
+
+
+def _catdict_tuple_get():
+    print('Test of CatDict.tuple.access()')
+
+    d.tuple.assign('k', ('red prince',))
+    assert isinstance(d.tuple.access('k'), tuple)
+
+    d.tuple.access('k')
+    assert d.tuple.access('k')[0] == 'red prince'
+
+    print('--> OK')
+
+
+def _catdict_dict_set():
+    print('Test of CatDict.dict.assign()')
+    d.dict.assign('key', {"a": 1})
+
+    try:
+        d.dict.assign('a', 1)
+    except TypeError as e:
+        print('-->', e)
+
+    print('--> OK')
+
+
+def _catdict_dict_get():
+    print('Test of CatDict.dict.access()')
+
+    d.dict.assign('k', {"k": "v"})
+    assert isinstance(d.dict.access('k'), dict)
+
+    d.dict.access('k')
+    assert d.dict.access('k')['k'] == 'v'
+
+    print('--> OK')
+
+def _catdict_set_set():
+    print('Test of CatDict.set.assign()')
+    d.set.assign('key', set())
+
+    try:
+        d.set.assign('a', [])
+    except TypeError as e:
+        print('-->', e)
+
+    print('--> OK')
+
+
+def _catdict_set_get():
+    print('Test of CatDict.set.access()')
+
+    d.set.assign('k', set())
+    assert isinstance(d.set.access('k'), set)
+
+    d.set.access('k').add(1)
+    assert d.set.access('k') == set([1])
+
+    print('--> OK')
+
+
+def _catdict_to_dict():
+    print('Test of CatDict.to_dict()')
+    dict_of_database = d.to_dict()
+    dict_of_database = d.to_dict()
+    dict_of_database = d.to_dict()
     print(dict_of_database.__class__)
     pprint(dict_of_database)
 
 
-def catdict_display():
-    d.display()
+def _catdict_status():
+    d.status()
 
 
 def run():
     func_version()
-    catdict_iSet()
-    catdict_iGet()
-    catdict_fSet()
-    catdict_fGet()
-    catdict_uSet()
-    catdict_uGet()
-    catdict_lSet()
-    catdict_lGet()
-    catdict_sSet()
-    catdict_sGet()
-    catdict_as_dict()
-    catdict_display()
+    _catdict_str_set()
+    _catdict_str_get()
+    _catdict_bool_set()
+    _catdict_bool_get()
+    _catdict_int_set()
+    _catdict_int_get()
+    _catdict_float_set()
+    _catdict_float_get()
+    _catdict_list_set()
+    _catdict_list_get()
+    _catdict_tuple_set()
+    _catdict_tuple_get()
+    _catdict_dict_set()
+    _catdict_dict_get()
+    _catdict_set_set()
+    _catdict_set_get()
+    _catdict_to_dict()
+    _catdict_status()
 
 
 if __name__ == '__main__':

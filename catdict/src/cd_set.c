@@ -1,49 +1,30 @@
-#include "catdict.h"
+#include "dtypes.h"
 #include "cd_set.h"
 
 
 PyObject *
-db_s_set(database *db, PyObject *args)
+cd_s_set(catdict *cd, PyObject *key, PyObject *item)
 {
-    PyObject *key, *item;
-
-    if (!PyArg_ParseTuple(args, "OO", &key, &item))
-        return NULL;
-
     if (!PySet_CheckExact(item)) {
         PyErr_SetString(PyExc_TypeError, "Except 'set' object");
         return NULL;
     }
 
-    if (db->dict_set == NULL) {
-        db->dict_set = PyDict_New();
+    if (cd->dict_set == NULL) {
+        cd->dict_set = PyDict_New();
 
         // Error handling.
-        if (db->dict_set == NULL)
+        if (cd->dict_set == NULL)
             Py_RETURN_ERR;
     }
 
-    if (PyDict_SetItem(db->dict_set, key, item) < 0)
-        return NULL;
-    else 
-        Py_RETURN_NONE;
-}
+    if (PyDict_SetItem(cd->dict_set, key, item) < 0) {
 
-PyObject *
-db_s_get(database *db, PyObject *args)
-{
-    PyObject *key;
+        if (PyObject_Hash(key) == -1)
+            Py_RETURN_HASH_ERR;
 
-    if (!PyArg_ParseTuple(args, "O", &key))
-        return NULL;
-
-    PyObject *o = PyDict_GetItemWithError(db->dict_set, key);
-    Py_INCREF(o);
-
-    if (o == NULL) {
-        PyErr_SetObject(PyExc_KeyError, key);
-        return NULL;
+        Py_RETURN_ERR;
     }
 
-    return o;
+    Py_RETURN_NONE;
 }

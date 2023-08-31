@@ -2,4 +2,5 @@
 build/*
 dist/*
 catdict.egg-info/*
+catdict/__pycache__/*
 *.so

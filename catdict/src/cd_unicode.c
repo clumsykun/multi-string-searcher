@@ -1,50 +1,30 @@
-#include "catdict.h"
+#include "dtypes.h"
 #include "cd_unicode.h"
 
 
 PyObject *
-db_u_set(database *db, PyObject *args)
+cd_u_set(catdict *cd, PyObject *key, PyObject *item)
 {
-    PyObject *key, *item;
-
-    if (!PyArg_ParseTuple(args, "OO", &key, &item))
-        return NULL;
-
     if (!PyUnicode_CheckExact(item)) {
         PyErr_SetString(PyExc_TypeError, "Except 'str' object");
         return NULL;
     }
 
-    if (db->dict_unicode == NULL) {
-        db->dict_unicode = PyDict_New();
+    if (cd->dict_unicode == NULL) {
+        cd->dict_unicode = PyDict_New();
 
         // Error handling.
-        if (db->dict_unicode == NULL)
+        if (cd->dict_unicode == NULL)
             Py_RETURN_ERR;
     }
 
-    if (PyDict_SetItem(db->dict_unicode, key, item) < 0)
-        return NULL;
-    else 
-        Py_RETURN_NONE;
-}
+    if (PyDict_SetItem(cd->dict_unicode, key, item) < 0) {
 
-PyObject *
-db_u_get(database *db, PyObject *args)
-{
-    PyObject *key;
+        if (PyObject_Hash(key) == -1)
+            Py_RETURN_HASH_ERR;
 
-    if (!PyArg_ParseTuple(args, "O", &key))
-        return NULL;
-
-    if (db->dict_unicode == NULL)
         Py_RETURN_ERR;
-    
-    PyObject *o = PyDict_GetItemWithError(db->dict_unicode, key);
-    Py_INCREF(o);
+    }
 
-    if (o == NULL)
-        PyErr_SetObject(PyExc_KeyError, key);
-
-    return o;
+    Py_RETURN_NONE;
 }
