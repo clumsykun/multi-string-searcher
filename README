@@ -1,3 +1,91 @@
 CatDict
 =======
-Python package providing categorical Dict class.
+Python package providing categorical dict class.
+
+Install
+=======
+
+$ pip install catdict
+
+Example
+=======
+Class 'CatDict' implement categorical dict:
+
+>>> from catdict import CatDict, version
+>>> version()
+CatDict version: ...
+>>> d = CatDict()
+>>> d.str['foo'] = 'bar'
+>>> d.str['foo']
+'bar'
+>>> d.str['foo'] = 1
+TypeError: Except 'str' object
+
+Only basic 8 data types of Python are supported:
+
+>>> d.str['codename'] = 'Critical Failure'
+>>> d.bool['is_stupid'] = True
+>>> d.int['the_ultimate_answer'] = 42
+>>> d.float['pi'] = 3.14
+>>> d.list['wishlist'] = ["Baldur's Gate III", 'Divinity: Fallen Heroes']
+>>> d.tuple['platform'] = ('Mac', 'Windows', 'PS5')
+>>> d.set['cursed'] = {'me', 'michael'}
+>>> d.dict['magic'] = {'dirt': 'gold', 'horny': 'happy'}
+
+Get status and convert to python dict:
+
+>>> d.status()
+Status of CatDict(0x7ff8bb3a4340):
+    str   variables (2)
+    bool  variables (1)
+    int   variables (1)
+    float variables (1)
+    list  variables (1)
+    tuple variables (1)
+    dict  variables (1)
+    set   variables (1)
+>>> dict_converted = d.to_dict()
+>>> dict_converted.__class__
+<class 'dict'>
+>>> from pprint import pprint
+>>> pprint(dict_converted)
+{'bool': {'is_stupid': True},
+ 'dict': {'magic': {'dirt': 'gold', 'horny': 'happy'}},
+ 'float': {'pi': 3.14},
+ 'int': {'the_ultimate_answer': 42},
+ 'list': {'wishlist': ["Baldur's Gate III"]},
+ 'set': {'cursed': {'me', 'michael'}},
+ 'str': {'codename': 'Critical Failure', 'foo': 'bar'},
+ 'tuple': {'platform': ('Mac', 'Windows', 'PS5')}}
+
+Class 'CatDict' use property to navigate appropriate category:
+
+>>> d.int
+<CatDict, of int>
+>>> d.str
+<CatDict, of str>
+>>> d.bool
+<CatDict, of bool>
+>>> d.float
+<CatDict, of float>
+>>> d.list
+<CatDict, of list>
+>>> d.tuple
+<CatDict, of tuple>
+>>> d.set
+<CatDict, of set>
+>>> d.dict
+<CatDict, of dict>
+
+Therefore, one can also use code:
+
+>>> d.float
+<CatDict, of float>
+>>> d['pi']
+3.14
+>>> d.str
+<CatDict, of str>
+>>> d['test'] = 1
+TypeError: Except 'str' object
+
+That's all.

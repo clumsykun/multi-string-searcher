@@ -2,7 +2,7 @@
 #define CD_LONG
 #include "dtypes.h"
 
-PyObject *
+int
 cd_i_set(catdict *cd, PyObject *key, PyObject *item);
 
 #endif /* CD_LONG */

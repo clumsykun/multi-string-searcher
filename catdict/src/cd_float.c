@@ -2,36 +2,27 @@
 #include "cd_float.h"
 
 
-PyObject *
+int
 cd_f_set(catdict *cd, PyObject *key, PyObject *item)
 {
     PyObject *o;
+
+    // support del operation
+    if (item == NULL)
+        return PyDict_DelItem(cd->dict_float, key);
+
     if (PyBool_Check(item) || PyLong_CheckExact(item) || PyFloat_CheckExact(item)) {
         o = PyNumber_Float(item);
 
-        if (o == NULL)
-            Py_RETURN_ERR;
+        if (o == NULL) {
+            SET_DEFAULT_ERR;
+            return -1;
+        }
     }
     else {
         PyErr_SetString(PyExc_TypeError, "Except 'bool', 'int', or 'float' value.");
-        return NULL;
+        return -1;
     };
 
-    if (cd->dict_float == NULL) {
-        cd->dict_float = PyDict_New();
-
-        // Error handling.
-        if (cd->dict_float == NULL)
-            Py_RETURN_ERR;
-    }
-
-    if (PyDict_SetItem(cd->dict_float, key, o) < 0) {
-
-        if (PyObject_Hash(key) == -1)
-            Py_RETURN_HASH_ERR;
-
-        Py_RETURN_ERR;
-    }
-
-    Py_RETURN_NONE;
+    return PyDict_SetItem(cd->dict_float, key, o);
 }

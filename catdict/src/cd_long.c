@@ -2,37 +2,27 @@
 #include "cd_long.h"
 
 
-PyObject *
+int
 cd_i_set(catdict *cd, PyObject *key, PyObject *item)
 {
     PyObject *o;
 
+    // support del operation
+    if (item == NULL)
+        return PyDict_DelItem(cd->dict_long, key);
+
     if (PyBool_Check(item) || PyLong_CheckExact(item) || PyFloat_CheckExact(item)) {
         o = PyNumber_Long(item);
 
-        if (o == NULL)
-            Py_RETURN_ERR;
+        if (o == NULL) {
+            SET_DEFAULT_ERR;
+            return -1;
+        };
     }
     else {
         PyErr_SetString(PyExc_TypeError, "Except 'bool', 'int', or 'float' value.");
-        return NULL;
+        return -1;
     };
 
-    if (cd->dict_long == NULL) {
-        cd->dict_long = PyDict_New();
-
-        // Error handling.
-        if (cd->dict_long == NULL)
-            Py_RETURN_ERR;
-    }
-
-    if (PyDict_SetItem(cd->dict_long, key, o) < 0) {
-
-        if (PyObject_Hash(key) == -1)
-            Py_RETURN_HASH_ERR;
-
-        Py_RETURN_ERR;
-    }
-
-    Py_RETURN_NONE;
+    return PyDict_SetItem(cd->dict_long, key, o);
 }

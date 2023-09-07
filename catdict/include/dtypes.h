@@ -3,21 +3,9 @@
 #define PY_SSIZE_T_CLEAN
 #include <Python.h>
 
-#define Py_RETURN_ERR do {                                           \
-    PyErr_SetString(PyExc_ValueError, "unexpected error occurred!"); \
-    return NULL;                                                     \
-} while (0)
-
-#define Py_RETURN_CR_ERR do {                                        \
-    PyErr_SetString(PyExc_ValueError, "unexpected cursor!");         \
-    return NULL;                                                     \
-} while (0)
-
-#define Py_RETURN_HASH_ERR do {                                      \
-    PyErr_SetString(PyExc_TypeError, "unhashable key!");             \
-    return NULL;                                                     \
-} while (0)
-
+#define SET_DEFAULT_ERR PyErr_SetString(PyExc_ValueError, "unexpected error occurred!")
+#define SET_CR_ERR PyErr_SetString(PyExc_ValueError, "unexpected data type division!")
+#define SET_CR_NULL PyErr_SetString(PyExc_ValueError, "choose data type division first!")
 
 /** ================================================================================================
  *  catdict definition

@@ -2,10 +2,14 @@
 #include "cd_bool.h"
 
 
-PyObject *
+int
 cd_b_set(catdict *cd, PyObject *key, PyObject *item)
 {
     PyObject *o;
+
+    // support del operation
+    if (item == NULL)
+        return PyDict_DelItem(cd->dict_bool, key);
 
     if (PyBool_Check(item) || PyLong_CheckExact(item) || PyFloat_CheckExact(item)) {
 
@@ -21,29 +25,14 @@ cd_b_set(catdict *cd, PyObject *key, PyObject *item)
                 break;
 
             default:
-                Py_RETURN_ERR;
+                SET_DEFAULT_ERR;
+                return -1;
         }
     }
     else {
         PyErr_SetString(PyExc_TypeError, "Except 'bool', 'int', or 'float' value.");
-        return NULL;
+        return -1;
     };
 
-    if (cd->dict_bool == NULL) {
-        cd->dict_bool = PyDict_New();
-
-        // Error handling.
-        if (cd->dict_bool == NULL)
-            Py_RETURN_ERR;
-    }
-
-    if (PyDict_SetItem(cd->dict_bool, key, o) < 0) {
-
-        if (PyObject_Hash(key) == -1)
-            Py_RETURN_HASH_ERR;
-
-        Py_RETURN_ERR;
-    }
-
-    Py_RETURN_NONE;
+    return PyDict_SetItem(cd->dict_bool, key, o);
 }

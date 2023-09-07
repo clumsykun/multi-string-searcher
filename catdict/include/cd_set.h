@@ -2,7 +2,7 @@
 #define CD_SET
 #include "dtypes.h"
 
-PyObject *
+int
 cd_s_set(catdict *cd, PyObject *key, PyObject *item);
 
 #endif /* CD_SET */

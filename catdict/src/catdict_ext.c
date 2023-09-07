@@ -1,6 +1,6 @@
 #include "catdict.h"
 
-#define CATDICT_VERSION "0.4.1"
+#define CATDICT_VERSION "0.4.3"
 
 /* =================================================================================================
  * Get version
@@ -14,15 +14,21 @@ version(PyObject *self, PyObject *Py_UNUSED(ignored))
 }
 
 /* =================================================================================================
- * Define type CatDict.
+ * Define type _CatDict.
  **/
 
 static PyMethodDef cd_methods[] = {
-    {"assign",  (PyCFunction) cd_assign, METH_VARARGS, "Assign object to catdict."},
-    {"access",  (PyCFunction) cd_access, METH_VARARGS, "Access object from catdict."},
-    {"status",  (PyCFunction) cd_status, METH_NOARGS, "Get status of catdict."},
+    {"status",  (PyCFunction) cd_status,  METH_NOARGS, "Get status of catdict."},
+    {"keys",    (PyCFunction) cd_keys,    METH_NOARGS, "Get keys of catdict."},
+    {"values",  (PyCFunction) cd_values,  METH_NOARGS, "Get values of catdict."},
     {"to_dict", (PyCFunction) cd_to_dict, METH_NOARGS, "Convert catdict to Python dict."},
     {NULL},
+};
+
+static PyMappingMethods cd_mapping = {
+    .mp_subscript     = (binaryfunc)    cd_subscript,
+    .mp_ass_subscript = (objobjargproc) cd_ass_subscript,
+    .mp_length        = (lenfunc)       cd_length,
 };
 
 static PyGetSetDef cd_getset[] = {
@@ -51,6 +57,7 @@ static PyTypeObject type_catdict = {
     .tp_repr      = (reprfunc)   cd_str,
     .tp_methods   =              cd_methods,
     .tp_getset    =              cd_getset,
+    .tp_as_mapping =            &cd_mapping,
 };
 
 /* =================================================================================================
@@ -70,7 +77,7 @@ static PyModuleDef module_catdict = {
     .m_methods = methods_module,
 };
 
-PyMODINIT_FUNC PyInit__catdict(void)
+PyMODINIT_FUNC PyInit_ext(void)
 {
     PyObject *m;
 

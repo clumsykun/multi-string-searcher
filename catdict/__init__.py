@@ -1,7 +1,8 @@
-from _catdict import _CatDict
+from .ext import _CatDict as _
+from .ext import version
 
 
-class CatDict(_CatDict):
+class CatDict(_):
 
     def __init__(self):
         super().__init__()
@@ -11,49 +12,41 @@ class CatDict(_CatDict):
 
     def to_dict(self) -> dict:
         return super().to_dict()
+    
+    def keys(self) -> list:
+        return super().keys()
 
-    def assign(self, key: object, value: object) -> None:
-        super().assign(key, value)
-
-    def access(self, key: object) -> object:
-        return super().access(key)
+    def values(self) -> list:
+        return super().values()
 
     @property
     def str(self):
-        super().str
-        return self
+        return super().str
 
     @property
     def bool(self):
-        super().bool
-        return self
+        return super().bool
 
     @property
     def int(self):
-        super().int
-        return self
+        return super().int
 
     @property
     def float(self):
-        super().float
-        return self
+        return super().float
 
     @property
     def list(self):
-        super().list
-        return self
+        return super().list
 
     @property
     def tuple(self):
-        super().tuple
-        return self
+        return super().tuple
 
     @property
     def dict(self):
-        super().dict
-        return self
+        return super().dict
 
     @property
     def set(self):
-        super().set
-        return self
+        return super().set

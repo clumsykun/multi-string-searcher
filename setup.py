@@ -1,7 +1,7 @@
 from setuptools import setup, Extension, find_packages
 
 _catdict = Extension(
-    '_catdict',
+    'catdict.ext',
     sources = [
         'catdict/src/dtypes.c',
         'catdict/src/cd_unicode.c',
@@ -13,17 +13,17 @@ _catdict = Extension(
         'catdict/src/cd_dict.c',
         'catdict/src/cd_set.c',
         'catdict/src/catdict.c',
-        'catdict/src/catdict_module.c',
+        'catdict/src/catdict_ext.c',
     ],
     include_dirs = ['catdict/include'],
 )
 
 setup(
     name         = 'catdict',
-    version      = '0.4.1',
+    version      = '0.4.3',
     packages     = find_packages(),
     ext_modules  = [_catdict],
-    description  = 'Python package providing categorical Dict class.',
+    description  = 'Python package providing categorical dict class.',
     author       = 'Zhao Kunwang',
     author_email = 'clumsykundev@gmail.com',
     url          = 'https://github.com/clumsykun/catdict',

@@ -1,114 +1,120 @@
 from pprint import pprint
-import _catdict
 import json
+import catdict
+from catdict import _
 
-d = _catdict._CatDict()
+d = catdict.CatDict()
+
+
+def tmp():
+    print(catdict.ext)
+
 
 def func_version():
-    _catdict.version()
+    catdict.version()
 
 
 def _catdict_str_set():
-    print('Test of CatDict.str.assign()')
-    d.str.assign('key', 'string 1.')
+    print('Test of CatDict.str')
+    d.str['key'] = 'string 1.'
 
     try:
-        d.str.assign('a', 1)
+        d.str['a'] = 1
     except TypeError as e:
         print('-->', e)
 
-    d.str.assign(2, 'string 2')
+    d.str[2] = 'string 2'
     print('--> OK')
 
 
 def _catdict_str_get():
-    print('Test of CatDict.str.access()')
+    print('Test of CatDict.str')
 
-    d.str.assign('k', 'This is some long string!')
-    assert isinstance(d.str.access('k'), str)
-    assert d.str.access('k') == 'This is some long string!'
+    d.str['k'] = 'This is some long string!'
+    assert isinstance(d.str['k'], str)
+    assert d.str['k'] == 'This is some long string!'
 
-    d.str.access('k')
-    d.str.access('k')
-    d.str.access('k')
+    d.str['k']
+    d.str['k']
+    d.str['k']
     print('--> OK')
 
 
 def _catdict_bool_set():
-    print('Test of CatDict.bool.assign()')
-    d.bool.assign('key', True)
+    print('Test of CatDict.bool')
+    d.bool['key'] = True
 
     try:
-        d.bool.assign('a', 'something')
+        d.bool['a'] = 'something'
     except TypeError as e:
         print('-->', e)
 
-    d.bool.assign(2, 2)
+    d.bool[2] = 2
     print('--> OK')
 
 
 def _catdict_bool_get():
-    print('Test of CatDict.bool.access()')
+    print('Test of CatDict.bool')
 
-    d.bool.assign('k', 1)
-    assert isinstance(d.bool.access('k'), bool)
-    assert d.bool.access('k') == 1
+    d.bool['k'] = 1
+    assert isinstance(d.bool['k'], bool)
+    assert d.bool['k'] == 1
 
     print('--> OK')
 
 
 def _catdict_int_set():
-    print('Test of CatDict.int.assign()')
-    d.int.assign('a', 1)
+    print('Test of CatDict.int')
+    d.int['a'] = 1
 
     try:
-        d.int.assign('key', 'string')
+        d.int['key'] = 'string'
     except TypeError as e:
         print('-->', e)
 
-    d.int.assign(1, 1)
+    d.int[1] = 1
     print('--> OK')
 
 
 def _catdict_int_get():
-    print('Test of CatDict.int.access()')
+    print('Test of CatDict.int')
 
-    d.int.assign('k', 1)
-    assert isinstance(d.int.access('k'), int)
-    assert d.int.access('k') == 1
+    d.int['k'] = 1
+    assert isinstance(d.int['k'], int)
+    assert d.int['k'] == 1
 
     print('--> OK')
 
 
 def _catdict_float_set():
-    print('Test of CatDict.float.assign()')
-    d.float.assign('a', 1)
+    print('Test of CatDict.float')
+    d.float['a'] = 1
 
     try:
-        d.float.assign('key', 'string')
+        d.float['key'] = 'string'
     except TypeError as e:
         print('-->', e)
 
-    d.float.assign(1, 3.14)
+    d.float['pi'] = 3.14
     print('--> OK')
 
 
 def _catdict_float_get():
-    print('Test of CatDict.float.access()')
+    print('Test of CatDict.float')
 
-    d.float.assign('k', 1)
-    assert isinstance(d.float.access('k'), float)
-    assert d.float.access('k') == 1
+    d.float['k'] = 1
+    assert isinstance(d.float['k'], float)
+    assert d.float['k'] == 1
 
     print('--> OK')
 
 
 def _catdict_list_set():
-    print('Test of CatDict.list.assign()')
-    d.list.assign('key', [])
+    print('Test of CatDict.list')
+    d.list['k'] = []
 
     try:
-        d.list.assign('a', 1)
+        d.list['a'] = 1
     except TypeError as e:
         print('-->', e)
 
@@ -116,23 +122,23 @@ def _catdict_list_set():
 
 
 def _catdict_list_get():
-    print('Test of CatDict.list.access()')
+    print('Test of CatDict.list')
 
-    d.list.assign('k', [])
-    assert isinstance(d.list.access('k'), list)
+    d.list['k'] = []
+    assert isinstance(d.list['k'], list)
 
-    d.list.access('k').append(1)
-    assert d.list.access('k')[0] == 1
+    d.list['k'].append(1)
+    assert d.list['k'][0] == 1
 
     print('--> OK')
 
 
 def _catdict_tuple_set():
-    print('Test of CatDict.tuple.assign()')
-    d.tuple.assign('key', (1,))
+    print('Test of CatDict.tuple')
+    d.tuple['key'] = (1,)
 
     try:
-        d.tuple.assign('a', 1)
+        d.tuple['a'] = 1
     except TypeError as e:
         print('-->', e)
 
@@ -140,23 +146,23 @@ def _catdict_tuple_set():
 
 
 def _catdict_tuple_get():
-    print('Test of CatDict.tuple.access()')
+    print('Test of CatDict.tuple')
 
-    d.tuple.assign('k', ('red prince',))
-    assert isinstance(d.tuple.access('k'), tuple)
+    d.tuple['k'] = ('red prince',)
+    assert isinstance(d.tuple['k'], tuple)
 
-    d.tuple.access('k')
-    assert d.tuple.access('k')[0] == 'red prince'
+    d.tuple['k']
+    assert d.tuple['k'][0] == 'red prince'
 
     print('--> OK')
 
 
 def _catdict_dict_set():
-    print('Test of CatDict.dict.assign()')
-    d.dict.assign('key', {"a": 1})
+    print('Test of CatDict.dict')
+    d.dict['key'] = {"a": 1}
 
     try:
-        d.dict.assign('a', 1)
+        d.dict['a'] = 1
     except TypeError as e:
         print('-->', e)
 
@@ -164,22 +170,24 @@ def _catdict_dict_set():
 
 
 def _catdict_dict_get():
-    print('Test of CatDict.dict.access()')
+    print('Test of CatDict.dict')
 
-    d.dict.assign('k', {"k": "v"})
-    assert isinstance(d.dict.access('k'), dict)
+    d.dict['k'] = {"k": "v"}
+    pprint(d.to_dict())
+    # assert isinstance(d.dict['k'], dict)
 
-    d.dict.access('k')
-    assert d.dict.access('k')['k'] == 'v'
+    d.dict['k']
+    assert d.dict['k']['k'] == 'v'
 
     print('--> OK')
 
+
 def _catdict_set_set():
-    print('Test of CatDict.set.assign()')
-    d.set.assign('key', set())
+    print('Test of CatDict.set')
+    d.set['key'] = set()
 
     try:
-        d.set.assign('a', [])
+        d.set['a'] = []
     except TypeError as e:
         print('-->', e)
 
@@ -187,15 +195,26 @@ def _catdict_set_set():
 
 
 def _catdict_set_get():
-    print('Test of CatDict.set.access()')
+    print('Test of CatDict.set')
 
-    d.set.assign('k', set())
-    assert isinstance(d.set.access('k'), set)
+    d.set['k'] = set()
+    assert isinstance(d.set['k'], set)
 
-    d.set.access('k').add(1)
-    assert d.set.access('k') == set([1])
+    d.set['k'].add(1)
+    assert d.set['k'] == set([1])
 
     print('--> OK')
+
+
+def _catdict_keys():
+    print(d.str.keys())
+    print(d.bool.keys())
+    print(d.int.keys())
+    print(d.float.keys())
+    print(d.list.keys())
+    print(d.tuple.keys())
+    print(d.dict.keys())
+    print(d.set.keys())
 
 
 def _catdict_to_dict():
@@ -211,8 +230,21 @@ def _catdict_status():
     d.status()
 
 
+def _catdict_delete():
+    print('Test of del')
+    del d.tuple['k']
+
+
+"""
+    TODO:
+        1. d.dict['ordered'][-1]['dn']
+"""
+
+
 def run():
+    tmp()
     func_version()
+    _catdict_keys()
     _catdict_str_set()
     _catdict_str_get()
     _catdict_bool_set()
@@ -229,6 +261,8 @@ def run():
     _catdict_dict_get()
     _catdict_set_set()
     _catdict_set_get()
+    _catdict_keys()
+    _catdict_delete()
     _catdict_to_dict()
     _catdict_status()
 

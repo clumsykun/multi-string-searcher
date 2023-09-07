@@ -11,18 +11,53 @@ cd_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
     cd = (catdict *) type->tp_alloc(type, 0);
 
     if (cd != NULL) {
-        cd->dict_unicode = NULL;
-        cd->dict_bool    = NULL;
-        cd->dict_long    = NULL;
-        cd->dict_float   = NULL;
-        cd->dict_list    = NULL;
-        cd->dict_tuple   = NULL;
-        cd->dict_dict    = NULL;
-        cd->dict_set     = NULL;
+        cd->dict_unicode = PyDict_New();
+        cd->dict_bool    = PyDict_New();
+        cd->dict_long    = PyDict_New();
+        cd->dict_float   = PyDict_New();
+        cd->dict_list    = PyDict_New();
+        cd->dict_tuple   = PyDict_New();
+        cd->dict_dict    = PyDict_New();
+        cd->dict_set     = PyDict_New();
         cd->cursor       = 0;
+
+        if (cd->dict_unicode == NULL)
+            goto error;
+
+        if (cd->dict_bool == NULL)
+            goto error;
+
+        if (cd->dict_long == NULL)
+            goto error;
+
+        if (cd->dict_float == NULL)
+            goto error;
+
+        if (cd->dict_list == NULL)
+            goto error;
+
+        if (cd->dict_tuple == NULL)
+            goto error;
+
+        if (cd->dict_dict == NULL)
+            goto error;
+
+        if (cd->dict_set == NULL)
+            goto error;
     }
 
     return (PyObject *) cd;
+
+    error:
+        Py_XDECREF(cd->dict_unicode);
+        Py_XDECREF(cd->dict_bool);
+        Py_XDECREF(cd->dict_long);
+        Py_XDECREF(cd->dict_float);
+        Py_XDECREF(cd->dict_list);
+        Py_XDECREF(cd->dict_tuple);
+        Py_XDECREF(cd->dict_dict);
+        Py_XDECREF(cd->dict_set);
+        return NULL;
 }
 
 int
@@ -34,14 +69,14 @@ cd_init(catdict *cd, PyObject *args, PyObject *kwds)
 void
 cd_dealloc(catdict *cd)
 {
-    Py_XDECREF(cd->dict_unicode);
-    Py_XDECREF(cd->dict_bool);
-    Py_XDECREF(cd->dict_long);
-    Py_XDECREF(cd->dict_float);
-    Py_XDECREF(cd->dict_list);
-    Py_XDECREF(cd->dict_tuple);
-    Py_XDECREF(cd->dict_dict);
-    Py_XDECREF(cd->dict_set);
+    Py_DECREF(cd->dict_unicode);
+    Py_DECREF(cd->dict_bool);
+    Py_DECREF(cd->dict_long);
+    Py_DECREF(cd->dict_float);
+    Py_DECREF(cd->dict_list);
+    Py_DECREF(cd->dict_tuple);
+    Py_DECREF(cd->dict_dict);
+    Py_DECREF(cd->dict_set);
     Py_TYPE(cd)->tp_free((PyObject *) cd);
 }
 
@@ -79,6 +114,7 @@ cd_str(catdict *cd)
             return PyUnicode_FromString("<CatDict, of set>");
 
         default:
-            Py_RETURN_ERR;
+            SET_DEFAULT_ERR;
+            return NULL;
     }
 }

@@ -9,24 +9,17 @@
 #include "catdict.h"
 
 
-PyObject *
-cd_assign(catdict *cd, PyObject *args)
+/** ================================================================================================
+ *  dict-like functions
+ */
+
+int
+cd_ass_subscript(catdict *cd, PyObject *key, PyObject *item)
 {
-    PyObject *key, *item;
-
-    if (!PyArg_ParseTuple(args, "OO", &key, &item))
-        return NULL;
-
     switch (cd->cursor) {
         case CR_NULL:
-            PyErr_SetString(
-                PyExc_ValueError,
-                "Specify data type before assign!\n"
-                "For example, assign float value 3.14 to CatDict instance 'd' with key 'pi', "
-                "use code:\n"
-                ">>> d.float.assign('pi', 3.14)"
-            );
-            return NULL;
+            SET_CR_NULL;
+            return -1;
 
         case CR_unicode:
             return cd_u_set(cd, key, item);
@@ -53,21 +46,19 @@ cd_assign(catdict *cd, PyObject *args)
             return cd_s_set(cd, key, item);
 
         default:
-            Py_RETURN_CR_ERR;
+            SET_CR_ERR;
+            return -1;
     }
 }
 
 PyObject *
-cd_access(catdict *cd, PyObject *args)
+cd_subscript(catdict *cd, PyObject *key)
 {
-    PyObject *dict, *key, *item;
-
-    if (!PyArg_ParseTuple(args, "O", &key))
-        return NULL;
+    PyObject *dict, *item;
 
     switch (cd->cursor) {
         case CR_NULL:
-            PyErr_SetString(PyExc_ValueError, "No data available!");
+            SET_CR_NULL;
             return NULL;
 
         case CR_unicode:
@@ -103,133 +94,277 @@ cd_access(catdict *cd, PyObject *args)
             break;
 
         default:
-            Py_RETURN_CR_ERR;
-    }
-
-    if (dict == NULL) {
-        PyErr_SetObject(PyExc_KeyError, key);
-        return NULL;
+            SET_CR_ERR;
+            return NULL;
     }
 
     item = PyDict_GetItemWithError(dict, key);
-    Py_XINCREF(item);
+
+    if (item == NULL) {
+        if (PyErr_Occurred() == NULL)  // key error
+            PyErr_SetObject(PyExc_KeyError, key);
+
+        return NULL;
+    }
+
+    Py_INCREF(item);
     return item;
 }
 
 PyObject *
-cd_status(catdict *cd, PyObject *Py_UNUSED(ignored))
+cd_keys(catdict *cd)
 {
-    printf("Status of CatDict(%p):\n", cd);
+    switch (cd->cursor) {
 
-    if (cd->dict_unicode)
-        printf("    str   variables (%ld)\n", PyDict_Size(cd->dict_unicode));
+        case CR_NULL:
+            SET_CR_NULL;
+            return NULL;
 
-    if (cd->dict_bool)
-        printf("    bool  variables (%ld)\n", PyDict_Size(cd->dict_bool));
+        case CR_unicode:
+            return PyDict_Keys(cd->dict_unicode);
 
-    if (cd->dict_long)
-        printf("    int   variables (%ld)\n", PyDict_Size(cd->dict_long));
+        case CR_bool:
+            return PyDict_Keys(cd->dict_bool);
 
-    if (cd->dict_float)
-        printf("    float variables (%ld)\n", PyDict_Size(cd->dict_float));
+        case CR_long:
+            return PyDict_Keys(cd->dict_long);
 
-    if (cd->dict_list)
-        printf("    list  variables (%ld)\n", PyDict_Size(cd->dict_list));
+        case CR_float:
+            return PyDict_Keys(cd->dict_float);
 
-    if (cd->dict_tuple)
-        printf("    tuple variables (%ld)\n", PyDict_Size(cd->dict_tuple));
+        case CR_list:
+            return PyDict_Keys(cd->dict_list);
 
-    if (cd->dict_dict)
-        printf("    dict  variables (%ld)\n", PyDict_Size(cd->dict_dict));
+        case CR_tuple:
+            return PyDict_Keys(cd->dict_tuple);
 
-    if (cd->dict_set)
-        printf("    set   variables (%ld)\n", PyDict_Size(cd->dict_set));
+        case CR_dict:
+            return PyDict_Keys(cd->dict_dict);
 
-    Py_RETURN_NONE;
+        case CR_set:
+            return PyDict_Keys(cd->dict_set);
+
+        default:
+            SET_CR_ERR;
+            return NULL;
+    }
 }
 
 PyObject *
-cd_to_dict(catdict *cd, PyObject *Py_UNUSED(ignored))
+cd_values(catdict *cd)
+{
+    switch (cd->cursor) {
+
+        case CR_NULL:
+            SET_CR_NULL;
+            return NULL;
+
+        case CR_unicode:
+            return PyDict_Values(cd->dict_unicode);
+
+        case CR_bool:
+            return PyDict_Values(cd->dict_bool);
+
+        case CR_long:
+            return PyDict_Values(cd->dict_long);
+
+        case CR_float:
+            return PyDict_Values(cd->dict_float);
+
+        case CR_list:
+            return PyDict_Values(cd->dict_list);
+
+        case CR_tuple:
+            return PyDict_Values(cd->dict_tuple);
+
+        case CR_dict:
+            return PyDict_Values(cd->dict_dict);
+
+        case CR_set:
+            return PyDict_Values(cd->dict_set);
+
+        default:
+            SET_CR_ERR;
+            return NULL;
+    }
+}
+
+Py_ssize_t
+cd_length(catdict *cd)
+{
+    switch (cd->cursor) {
+        case CR_NULL:
+            SET_CR_NULL;
+            return -1;
+
+        case CR_unicode:
+            return PyDict_Size(cd->dict_unicode);
+
+        case CR_bool:
+            return PyDict_Size(cd->dict_bool);
+
+        case CR_long:
+            return PyDict_Size(cd->dict_long);
+
+        case CR_float:
+            return PyDict_Size(cd->dict_float);
+
+        case CR_list:
+            return PyDict_Size(cd->dict_list);
+
+        case CR_tuple:
+            return PyDict_Size(cd->dict_tuple);
+
+        case CR_dict:
+            return PyDict_Size(cd->dict_dict);
+
+        case CR_set:
+            return PyDict_Size(cd->dict_set);
+
+        default:
+            SET_CR_ERR;
+            return -1;
+    }
+}
+
+/** ================================================================================================
+ *  basic tools
+ */
+
+PyObject *
+cd_to_dict(catdict *cd)
 {
     PyObject *o, *ret = PyDict_New();
 
-    if (ret == NULL)
-        Py_RETURN_ERR;
+    if (ret == NULL) {
+        SET_DEFAULT_ERR;
+        return NULL;
+    }
 
-    if (cd->dict_unicode) {
+    if (PyDict_Size(cd->dict_unicode) > 0) {
         o = PyDict_Copy(cd->dict_unicode);
         if (PyDict_SetItemString(ret, "str", o) < 0) {
             Py_XDECREF(o);
-            Py_RETURN_ERR;
+            SET_DEFAULT_ERR;
+            return NULL;
         }
         Py_DECREF(o);
     }
 
-    if (cd->dict_bool) {
+    if (PyDict_Size(cd->dict_bool) > 0) {
         o = PyDict_Copy(cd->dict_bool);
         if (PyDict_SetItemString(ret, "bool", o) < 0) {
             Py_XDECREF(o);
-            Py_RETURN_ERR;
+            SET_DEFAULT_ERR;
+            return NULL;
         }
         Py_DECREF(o);
     }
 
-    if (cd->dict_long) {
+    if (PyDict_Size(cd->dict_long) > 0) {
         o = PyDict_Copy(cd->dict_long);
         if (PyDict_SetItemString(ret, "int", o) < 0) {
             Py_XDECREF(o);
-            Py_RETURN_ERR;
+            SET_DEFAULT_ERR;
+            return NULL;
         }
         Py_DECREF(o);
     }
 
-    if (cd->dict_float) {
+    if (PyDict_Size(cd->dict_float) > 0) {
         o = PyDict_Copy(cd->dict_float);
         if (PyDict_SetItemString(ret, "float", o) < 0) {
             Py_XDECREF(o);
-            Py_RETURN_ERR;
+            SET_DEFAULT_ERR;
+            return NULL;
         }
         Py_DECREF(o);
     }
 
-    if (cd->dict_list) {
+    if (PyDict_Size(cd->dict_list) > 0) {
         o = PyDict_Copy(cd->dict_list);
         if (PyDict_SetItemString(ret, "list", o) < 0) {
             Py_XDECREF(o);
-            Py_RETURN_ERR;
+            SET_DEFAULT_ERR;
+            return NULL;
         }
         Py_DECREF(o);
     }
 
-    if (cd->dict_tuple) {
+    if (PyDict_Size(cd->dict_tuple) > 0) {
         o = PyDict_Copy(cd->dict_tuple);
         if (PyDict_SetItemString(ret, "tuple", o) < 0) {
             Py_XDECREF(o);
-            Py_RETURN_ERR;
+            SET_DEFAULT_ERR;
+            return NULL;
         }
         Py_DECREF(o);
     }
 
-    if (cd->dict_dict) {
+    if (PyDict_Size(cd->dict_dict) > 0) {
         o = PyDict_Copy(cd->dict_dict);
         if (PyDict_SetItemString(ret, "dict", o) < 0) {
             Py_XDECREF(o);
-            Py_RETURN_ERR;
+            SET_DEFAULT_ERR;
+            return NULL;
         }
         Py_DECREF(o);
     }
 
-    if (cd->dict_set) {
+    if (PyDict_Size(cd->dict_set) > 0) {
         o = PyDict_Copy(cd->dict_set);
         if (PyDict_SetItemString(ret, "set", o) < 0) {
             Py_XDECREF(o);
-            Py_RETURN_ERR;
+            SET_DEFAULT_ERR;
+            return NULL;
         }
         Py_DECREF(o);
     }
 
     return ret;
 }
+
+PyObject *
+cd_status(catdict *cd)
+{
+    printf("Status of CatDict(%p):\n", cd);
+
+    if (PyDict_Size(cd->dict_unicode) > 0)
+        printf("    str   variables (%ld)\n", PyDict_Size(cd->dict_unicode));
+
+    if (PyDict_Size(cd->dict_bool) > 0)
+        printf("    bool  variables (%ld)\n", PyDict_Size(cd->dict_bool));
+
+    if (PyDict_Size(cd->dict_long) > 0)
+        printf("    int   variables (%ld)\n", PyDict_Size(cd->dict_long));
+
+    if (PyDict_Size(cd->dict_float) > 0)
+        printf("    float variables (%ld)\n", PyDict_Size(cd->dict_float));
+
+    if (PyDict_Size(cd->dict_list) > 0)
+        printf("    list  variables (%ld)\n", PyDict_Size(cd->dict_list));
+
+    if (PyDict_Size(cd->dict_tuple) > 0)
+        printf("    tuple variables (%ld)\n", PyDict_Size(cd->dict_tuple));
+
+    if (PyDict_Size(cd->dict_dict) > 0)
+        printf("    dict  variables (%ld)\n", PyDict_Size(cd->dict_dict));
+
+    if (PyDict_Size(cd->dict_set) > 0)
+        printf("    set   variables (%ld)\n", PyDict_Size(cd->dict_set));
+
+    Py_RETURN_NONE;
+}
+
+int
+cd_ignore(catdict *self, PyObject *value, void *closure)
+{
+    return 0;
+}
+
+/** ================================================================================================
+ *  switch cursor
+ */
 
 PyObject *
 cd_switch_unicode(catdict *cd, void *closure)
@@ -293,10 +428,4 @@ cd_switch_set(catdict *cd, void *closure)
     Py_INCREF(cd);
     cd->cursor = CR_set;
     return (PyObject *) cd;
-}
-
-int
-cd_ignore(catdict *self, PyObject *value, void *closure)
-{
-    return 0;
 }
