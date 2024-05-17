@@ -1,19 +1,10 @@
 from setuptools import setup, Extension, find_packages
 
 _catdict = Extension(
-    'catdict.ext',
+    'catdict.mss',
     sources = [
-        'catdict/src/dtypes.c',
-        'catdict/src/cd_unicode.c',
-        'catdict/src/cd_bool.c',
-        'catdict/src/cd_long.c',
-        'catdict/src/cd_float.c',
-        'catdict/src/cd_list.c',
-        'catdict/src/cd_tuple.c',
-        'catdict/src/cd_dict.c',
-        'catdict/src/cd_set.c',
-        'catdict/src/catdict.c',
         'catdict/src/module.c',
+        'catdict/src/searcher.c',
     ],
     include_dirs = ['catdict/include'],
 )

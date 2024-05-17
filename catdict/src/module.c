@@ -1,15 +1,17 @@
-#include "catdict.h"
+#define PY_SSIZE_T_CLEAN
+#include <Python.h>
+#include "searcher.h"
 
-#define CATDICT_VERSION "0.4.3"
+#define PLACEHOLDER "placeholder"
 
 /* =================================================================================================
  * Get version
  **/
 
 static PyObject *
-version(PyObject *self, PyObject *Py_UNUSED(ignored))
+placeholder(PyObject *self, PyObject *Py_UNUSED(ignored))
 {
-    printf("CatDict version: %s.\n", CATDICT_VERSION);
+    printf("(%s)\n", PLACEHOLDER);
     Py_RETURN_NONE;
 }
 
@@ -17,47 +19,35 @@ version(PyObject *self, PyObject *Py_UNUSED(ignored))
  * Define type _CatDict.
  **/
 
-static PyMethodDef cd_methods[] = {
-    {"status",  (PyCFunction) cd_status,  METH_NOARGS, "Get status of catdict."},
-    {"keys",    (PyCFunction) cd_keys,    METH_NOARGS, "Get keys of catdict."},
-    {"values",  (PyCFunction) cd_values,  METH_NOARGS, "Get values of catdict."},
-    {"to_dict", (PyCFunction) cd_to_dict, METH_NOARGS, "Convert catdict to Python dict."},
+static PyMethodDef Searcher_methods[] = {
+    {"index_add",  (PyCFunction)Searcher_index_add,  METH_VARARGS, "Searcher_index_size"},
     {NULL},
 };
 
-static PyMappingMethods cd_mapping = {
-    .mp_subscript     = (binaryfunc)    cd_subscript,
-    .mp_ass_subscript = (objobjargproc) cd_ass_subscript,
-    .mp_length        = (lenfunc)       cd_length,
+static PyMappingMethods Searcher_mapping = {
+    .mp_length = (lenfunc)Searcher_length,
 };
 
-static PyGetSetDef cd_getset[] = {
-    {"str",   (getter) cd_switch_unicode, (setter) cd_ignore, "Switched to str.", NULL},
-    {"bool",  (getter) cd_switch_bool,    (setter) cd_ignore, "Switched to bool.", NULL},
-    {"int",   (getter) cd_switch_long,    (setter) cd_ignore, "Switched to int.", NULL},
-    {"float", (getter) cd_switch_float,   (setter) cd_ignore, "Switched to float.", NULL},
-    {"list",  (getter) cd_switch_list,    (setter) cd_ignore, "Switched to list.", NULL},
-    {"tuple", (getter) cd_switch_tuple,   (setter) cd_ignore, "Switched to tuple.", NULL},
-    {"dict",  (getter) cd_switch_dict,    (setter) cd_ignore, "Switched to dict.", NULL},
-    {"set",   (getter) cd_switch_set,     (setter) cd_ignore, "Switched to set.", NULL},
+static PyGetSetDef Searcher_getset[] = {
+    {"index_size", (getter)Searcher_index_size, (setter)Searcher_ignore, "index_size", NULL},
     {NULL}  /* Sentinel */
 };
 
-static PyTypeObject type_catdict = {
+static PyTypeObject type_Searcher = {
     PyVarObject_HEAD_INIT(NULL, 0)
-    .tp_name      = "_CatDict",
-    .tp_doc       = PyDoc_STR("C implementation of categorical dict."),
-    .tp_basicsize = sizeof(catdict),
+    .tp_name      = "Searcher",
+    .tp_doc       = PyDoc_STR("The multi-string searcher."),
+    .tp_basicsize = sizeof(Searcher),
     .tp_itemsize  = 0,
     .tp_flags     = Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE,
-    .tp_new       =              cd_new,
-    .tp_init      = (initproc)   cd_init,
-    .tp_dealloc   = (destructor) cd_dealloc,
-    .tp_str       = (reprfunc)   cd_str,
-    .tp_repr      = (reprfunc)   cd_str,
-    .tp_methods   =              cd_methods,
-    .tp_getset    =              cd_getset,
-    .tp_as_mapping =            &cd_mapping,
+    .tp_new       =              Searcher_new,
+    .tp_init      = (initproc)   Searcher_init,
+    .tp_dealloc   = (destructor) Searcher_dealloc,
+    .tp_str       = (reprfunc)   Searcher_str,
+    .tp_repr      = (reprfunc)   Searcher_str,
+    .tp_methods   =              Searcher_methods,
+    .tp_getset    =              Searcher_getset,
+    .tp_as_mapping =            &Searcher_mapping,
 };
 
 /* =================================================================================================
@@ -65,33 +55,33 @@ static PyTypeObject type_catdict = {
  **/
 
 static PyMethodDef methods_module[] = {
-    {"version", version, METH_VARARGS, "Get version."},
+    {"placeholder", placeholder, METH_VARARGS, "placeholder"},
     {NULL},
 };
 
-static PyModuleDef module_catdict = {
+static PyModuleDef module_mss = {
     PyModuleDef_HEAD_INIT,
-    .m_name    = "_catdict",
+    .m_name    = "mss",
     .m_doc     = "Package of organize temporary data.",
     .m_size    = -1,
     .m_methods = methods_module,
 };
 
-PyMODINIT_FUNC PyInit_ext(void)
+PyMODINIT_FUNC PyInit_mss(void)
 {
     PyObject *m;
 
-    if (PyType_Ready(&type_catdict) < 0)
+    if (PyType_Ready(&type_Searcher) < 0)
         return NULL;
 
-    m = PyModule_Create(&module_catdict);
+    m = PyModule_Create(&module_mss);
 
     if (m == NULL)
         return NULL;
 
-    Py_INCREF(&type_catdict);
-    if (PyModule_AddObject(m, "_CatDict", (PyObject *) &type_catdict) < 0) {
-        Py_DECREF(&type_catdict);
+    Py_INCREF(&type_Searcher);
+    if (PyModule_AddObject(m, "Searcher", (PyObject *) &type_Searcher) < 0) {
+        Py_DECREF(&type_Searcher);
         Py_DECREF(m);
         return NULL;
     }
