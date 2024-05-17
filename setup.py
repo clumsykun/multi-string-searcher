@@ -13,7 +13,7 @@ _catdict = Extension(
         'catdict/src/cd_dict.c',
         'catdict/src/cd_set.c',
         'catdict/src/catdict.c',
-        'catdict/src/catdict_ext.c',
+        'catdict/src/module.c',
     ],
     include_dirs = ['catdict/include'],
 )
