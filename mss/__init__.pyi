@@ -2,5 +2,5 @@ class Searcher:
     pass
 
     @property
-    def index_size(self)->None:
+    def num_targets(self)->None:
         ...

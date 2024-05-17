@@ -6,6 +6,7 @@ def main():
     print('-------------------------------------------------')
     print('START TEST')
     print(ser)
+    print(ser.num_targets)
     print('OK')
 
 

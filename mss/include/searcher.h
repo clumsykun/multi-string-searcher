@@ -6,8 +6,7 @@
 
 typedef struct {
     PyObject_HEAD
-    size_t size_targets;
-    // dict    *dict;
+    targets *tgs;
 } Searcher;
 
 /** ================================================================================================
@@ -26,11 +25,8 @@ Searcher_dealloc(Searcher *self);
 int
 Searcher_ignore(Searcher *self, void *closure);
 
-Py_ssize_t
-Searcher_length(Searcher *self);
-
 PyObject *
-Searcher_str(Searcher *cd);
+Searcher_num_targets(Searcher *self);
 
 PyObject *
 Searcher_index_add(Searcher *self, PyObject *args);

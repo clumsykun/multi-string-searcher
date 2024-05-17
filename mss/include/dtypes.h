@@ -2,8 +2,8 @@
 #define DTYPES
 
 typedef struct {
-    size_t size;
-} dict;
+    size_t num_targets;
+} targets;
 
 
 #endif /* DTYPES */

@@ -14,7 +14,9 @@ Searcher_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
 
     if (self != NULL) {
         // self->name = PyUnicode_FromString("Multi-string Searcher");
-        self->size_targets = 0;
+
+        self->tgs = (targets *)malloc(sizeof(targets));
+        self->tgs->num_targets = 0;
 
         // if (self->name == NULL) {
         //     Py_DECREF(self);
@@ -35,6 +37,7 @@ void
 Searcher_dealloc(Searcher *self)
 {
     // Py_DECREF(self->name);
+    free(self->tgs);
     Py_TYPE(self)->tp_free((PyObject *) self);
 }
 
@@ -44,16 +47,10 @@ Searcher_ignore(Searcher *self, void *closure)
     return 0;
 }
 
-Py_ssize_t
-Searcher_length(Searcher *self)
+PyObject *
+Searcher_num_targets(Searcher *self)
 {
-    // if (self->dict->size > (size_t)PY_SSIZE_T_MAX) {
-    //     PyErr_SetString(PyExc_TypeError, "Something with index size?");
-    //     return -1;
-    // }
-
-    // return (Py_ssize_t)self->dict->size;
-    return 0;
+    return PyLong_FromSize_t(self->tgs->num_targets);
 }
 
 PyObject *

@@ -28,10 +28,10 @@ placeholder(PyObject *self, PyObject *Py_UNUSED(ignored))
 //     .mp_length = (lenfunc)Searcher_length,
 // };
 
-// static PyGetSetDef Searcher_getset[] = {
-//     {"index_size", (getter)Searcher_index_size, (setter)Searcher_ignore, "index_size", NULL},
-//     {NULL}  /* Sentinel */
-// };
+static PyGetSetDef Searcher_getset[] = {
+    {"num_targets", (getter)Searcher_num_targets, (setter)Searcher_ignore, "Return number of targets.", NULL},
+    {NULL}  /* Sentinel */
+};
 
 static PyTypeObject type_Searcher = {
     .ob_base      = PyVarObject_HEAD_INIT(NULL, 0)
@@ -43,10 +43,10 @@ static PyTypeObject type_Searcher = {
     .tp_new       =              Searcher_new,
     .tp_init      = (initproc)   Searcher_init,
     .tp_dealloc   = (destructor) Searcher_dealloc,
+    .tp_getset    =              Searcher_getset,
     // .tp_str       = (reprfunc)   Searcher_str,
     // .tp_repr      = (reprfunc)   Searcher_str,
     // .tp_methods   =              Searcher_methods,
-    // .tp_getset    =              Searcher_getset,
     // .tp_as_mapping =            &Searcher_mapping,
 };
 
