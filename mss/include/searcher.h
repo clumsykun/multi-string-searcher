@@ -6,8 +6,8 @@
 
 typedef struct {
     PyObject_HEAD
-    PyObject *name;
-    dict    *dict;
+    size_t size_targets;
+    // dict    *dict;
 } Searcher;
 
 /** ================================================================================================
@@ -36,6 +36,6 @@ PyObject *
 Searcher_index_add(Searcher *self, PyObject *args);
 
 PyObject *
-Searcher_index_size(Searcher *self, void *closure);
+Searcher_index_size(Searcher *self);
 
 #endif /* SEARCHER */

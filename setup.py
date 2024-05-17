@@ -1,7 +1,7 @@
 from setuptools import setup, Extension, find_packages
 
-_catdict = Extension(
-    'mss.mss',
+_mss = Extension(
+    'mss._mss',
     sources = [
         'mss/src/module.c',
         'mss/src/searcher.c',
@@ -13,7 +13,7 @@ setup(
     name         = 'mss',
     version      = '0.0.1',
     packages     = find_packages(),
-    ext_modules  = [_catdict],
+    ext_modules  = [_mss],
     description  = 'Multi-string searcher.',
     author       = 'Zhao Kunwang',
     author_email = 'clumsykun@qq.com',

@@ -1,6 +1,6 @@
 #define PY_SSIZE_T_CLEAN
 #include <Python.h>
-
+#include "dtypes.h"
 #include "searcher.h"
 
 /**
@@ -10,34 +10,31 @@
 PyObject *
 Searcher_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
-    Searcher* ser = (Searcher *) type->tp_alloc(type, 0);
+    Searcher *self = (Searcher *) type->tp_alloc(type, 0);
 
-    if (ser != NULL) {
-        ser->name = Py_BuildValue("Multi-string Searcher");
+    if (self != NULL) {
+        // self->name = PyUnicode_FromString("Multi-string Searcher");
+        self->size_targets = 0;
 
-        if (ser->name == NULL) {
-            goto error;
-        }
+        // if (self->name == NULL) {
+        //     Py_DECREF(self);
+        //     return NULL;
+        // }
     }
 
-    return (PyObject *) ser;
-
-    error:
-        Py_XDECREF(ser->name);
-        return NULL;
+    return (PyObject *)self; 
 }
 
 int
 Searcher_init(Searcher *self, PyObject *args, PyObject *kwds)
 {
-    self->dict->size = 0;
     return 0;
 }
 
 void
 Searcher_dealloc(Searcher *self)
 {
-    Py_DECREF(self->name);
+    // Py_DECREF(self->name);
     Py_TYPE(self)->tp_free((PyObject *) self);
 }
 
@@ -50,18 +47,13 @@ Searcher_ignore(Searcher *self, void *closure)
 Py_ssize_t
 Searcher_length(Searcher *self)
 {
-    if (self->dict->size > (size_t)PY_SSIZE_T_MAX) {
-        PyErr_SetString(PyExc_TypeError, "Something with index size?");
-        return -1;
-    }
+    // if (self->dict->size > (size_t)PY_SSIZE_T_MAX) {
+    //     PyErr_SetString(PyExc_TypeError, "Something with index size?");
+    //     return -1;
+    // }
 
-    return (Py_ssize_t)self->dict->size;
-}
-
-PyObject *
-Searcher_str(Searcher *self)
-{
-    return self->name;
+    // return (Py_ssize_t)self->dict->size;
+    return 0;
 }
 
 PyObject *
@@ -71,14 +63,14 @@ Searcher_index_add(Searcher *self, PyObject *args)
     if (!PyArg_ParseTuple(args, "I", &value)) {
         return NULL;
     }
-    self->dict->size += value;
+    // self->dict->size += value;
     Py_RETURN_NONE;
 }
 
 PyObject *
-Searcher_index_size(Searcher *self, void *closure)
+Searcher_index_size(Searcher *self)
 {
-    PyObject *size = PyLong_FromSize_t(self->dict->size);
+    PyObject *size = PyLong_FromSize_t(0);
     Py_INCREF(size);
     return size;
 }

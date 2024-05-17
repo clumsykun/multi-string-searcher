@@ -19,23 +19,23 @@ placeholder(PyObject *self, PyObject *Py_UNUSED(ignored))
  * Define type _CatDict.
  **/
 
-static PyMethodDef Searcher_methods[] = {
-    {"index_add",  (PyCFunction)Searcher_index_add,  METH_VARARGS, "Searcher_index_size"},
-    {NULL},
-};
+// static PyMethodDef Searcher_methods[] = {
+//     {"index_add",  (PyCFunction)Searcher_index_add,  METH_VARARGS, "Searcher_index_size"},
+//     {NULL},
+// };
 
-static PyMappingMethods Searcher_mapping = {
-    .mp_length = (lenfunc)Searcher_length,
-};
+// static PyMappingMethods Searcher_mapping = {
+//     .mp_length = (lenfunc)Searcher_length,
+// };
 
-static PyGetSetDef Searcher_getset[] = {
-    {"index_size", (getter)Searcher_index_size, (setter)Searcher_ignore, "index_size", NULL},
-    {NULL}  /* Sentinel */
-};
+// static PyGetSetDef Searcher_getset[] = {
+//     {"index_size", (getter)Searcher_index_size, (setter)Searcher_ignore, "index_size", NULL},
+//     {NULL}  /* Sentinel */
+// };
 
 static PyTypeObject type_Searcher = {
-    PyVarObject_HEAD_INIT(NULL, 0)
-    .tp_name      = "Searcher",
+    .ob_base      = PyVarObject_HEAD_INIT(NULL, 0)
+    .tp_name      = "mss.Searcher",
     .tp_doc       = PyDoc_STR("Multi-string searcher."),
     .tp_basicsize = sizeof(Searcher),
     .tp_itemsize  = 0,
@@ -43,11 +43,11 @@ static PyTypeObject type_Searcher = {
     .tp_new       =              Searcher_new,
     .tp_init      = (initproc)   Searcher_init,
     .tp_dealloc   = (destructor) Searcher_dealloc,
-    .tp_str       = (reprfunc)   Searcher_str,
-    .tp_repr      = (reprfunc)   Searcher_str,
-    .tp_methods   =              Searcher_methods,
-    .tp_getset    =              Searcher_getset,
-    .tp_as_mapping =            &Searcher_mapping,
+    // .tp_str       = (reprfunc)   Searcher_str,
+    // .tp_repr      = (reprfunc)   Searcher_str,
+    // .tp_methods   =              Searcher_methods,
+    // .tp_getset    =              Searcher_getset,
+    // .tp_as_mapping =            &Searcher_mapping,
 };
 
 /* =================================================================================================
@@ -67,7 +67,7 @@ static PyModuleDef module_mss = {
     .m_methods = methods_module,
 };
 
-PyMODINIT_FUNC PyInit_mss(void)
+PyMODINIT_FUNC PyInit__mss(void)
 {
     PyObject *m;
 

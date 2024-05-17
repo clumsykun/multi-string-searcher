@@ -1,1 +1,1 @@
-from .mss import Searcher
+from ._mss import Searcher
