@@ -1,2 +1,2 @@
-from catdict import Searcher
+from mss import Searcher
 

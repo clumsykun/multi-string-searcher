@@ -36,7 +36,7 @@ static PyGetSetDef Searcher_getset[] = {
 static PyTypeObject type_Searcher = {
     PyVarObject_HEAD_INIT(NULL, 0)
     .tp_name      = "Searcher",
-    .tp_doc       = PyDoc_STR("The multi-string searcher."),
+    .tp_doc       = PyDoc_STR("Multi-string searcher."),
     .tp_basicsize = sizeof(Searcher),
     .tp_itemsize  = 0,
     .tp_flags     = Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE,
@@ -62,7 +62,7 @@ static PyMethodDef methods_module[] = {
 static PyModuleDef module_mss = {
     PyModuleDef_HEAD_INIT,
     .m_name    = "mss",
-    .m_doc     = "Package of organize temporary data.",
+    .m_doc     = "Multi-string searcher.",
     .m_size    = -1,
     .m_methods = methods_module,
 };
