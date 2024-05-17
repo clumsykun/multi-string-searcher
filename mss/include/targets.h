@@ -3,7 +3,8 @@
 
 #include "dtypes.h"
 
-int
-tgs_add_target(targets *tgs, const char *target);
+targets *tgs_new();
+void     tgs_del(targets *tgs);
+int      tgs_add_target(targets *tgs, const char *target);
 
 #endif /* TARGETS */

@@ -14,15 +14,7 @@ Searcher_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
     Searcher *self = (Searcher *) type->tp_alloc(type, 0);
 
     if (self != NULL) {
-        // self->name = PyUnicode_FromString("Multi-string Searcher");
-
-        self->tgs = (targets *)malloc(sizeof(targets));
-        self->tgs->num_targets = 0;
-
-        // if (self->name == NULL) {
-        //     Py_DECREF(self);
-        //     return NULL;
-        // }
+        self->tgs = tgs_new();
     }
 
     return (PyObject *)self; 
@@ -37,8 +29,7 @@ Searcher_init(Searcher *self, PyObject *args, PyObject *kwds)
 void
 Searcher_dealloc(Searcher *self)
 {
-    // Py_DECREF(self->name);
-    free(self->tgs);
+    tgs_del(self->tgs);
     Py_TYPE(self)->tp_free((PyObject *) self);
 }
 
