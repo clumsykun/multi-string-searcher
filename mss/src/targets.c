@@ -23,5 +23,8 @@ tgs_add_target(targets *tgs, const char *target)
     printf("add target:%s \n", target);
     tgs->num_targets += 1;
 
+    printf("length %ld \n", strlen(target));
+    printf("first %d\n", (int)target[0]);
+
     return 0;
 }
