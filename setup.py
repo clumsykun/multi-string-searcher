@@ -5,6 +5,7 @@ _mss = Extension(
     sources = [
         'mss/src/module.c',
         'mss/src/searcher.c',
+        'mss/src/targets.c',
     ],
     include_dirs = ['mss/include'],
 )

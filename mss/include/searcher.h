@@ -29,7 +29,10 @@ PyObject *
 Searcher_num_targets(Searcher *self);
 
 PyObject *
-Searcher_index_add(Searcher *self, PyObject *args);
+Searcher_add_target(Searcher *self, PyObject *args);
+
+PyObject *
+Searcher_extend_targets(Searcher *self, PyObject *args);
 
 PyObject *
 Searcher_index_size(Searcher *self);

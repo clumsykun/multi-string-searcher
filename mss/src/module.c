@@ -19,17 +19,18 @@ placeholder(PyObject *self, PyObject *Py_UNUSED(ignored))
  * Define type _CatDict.
  **/
 
-// static PyMethodDef Searcher_methods[] = {
-//     {"index_add",  (PyCFunction)Searcher_index_add,  METH_VARARGS, "Searcher_index_size"},
-//     {NULL},
-// };
+static PyMethodDef Searcher_methods[] = {
+    {"add_target",  (PyCFunction)Searcher_add_target,  METH_VARARGS, "add string to targets."},
+    {"extend_targets",  (PyCFunction)Searcher_extend_targets,  METH_VARARGS, "add a batch of string to targets."},
+    {NULL},
+};
 
 // static PyMappingMethods Searcher_mapping = {
 //     .mp_length = (lenfunc)Searcher_length,
 // };
 
 static PyGetSetDef Searcher_getset[] = {
-    {"num_targets", (getter)Searcher_num_targets, (setter)Searcher_ignore, "Return number of targets.", NULL},
+    {"num_targets", (getter)Searcher_num_targets, (setter)Searcher_ignore, "return number of targets.", NULL},
     {NULL}  /* Sentinel */
 };
 
@@ -46,7 +47,7 @@ static PyTypeObject type_Searcher = {
     .tp_getset    =              Searcher_getset,
     // .tp_str       = (reprfunc)   Searcher_str,
     // .tp_repr      = (reprfunc)   Searcher_str,
-    // .tp_methods   =              Searcher_methods,
+    .tp_methods   =              Searcher_methods,
     // .tp_as_mapping =            &Searcher_mapping,
 };
 
